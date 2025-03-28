@@ -12,8 +12,20 @@ dotenv.config();
 const port = process.env.PORT;
 const app = express();
 
+const allowedOrigins = [
+  process.env.LOCAL_URL,
+  process.env.ONLINE_SHOP_URL,
+  process.env.CAR_RENTAL_URL,
+];
+
 app.use(cors({
-  origin: process.env.LOCAL_URL || process.env.ONLINE_SHOP_URL || process.env.CAR_RENTAL_URL || "*",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 
