@@ -13,10 +13,13 @@ const port = process.env.PORT;
 const app = express();
 
 app.use(cors({
-  origin: process.env.LOCAL_URL || process.env.CAR_RENTAL_URL,
+  origin: process.env.LOCAL_URL || process.env.ONLINE_SHOP_URL || process.env.CAR_RENTAL_URL,
   credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 }));
 
+app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(auth(authConfig));
