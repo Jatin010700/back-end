@@ -13,7 +13,7 @@ const port = process.env.PORT;
 const app = express();
 
 app.use(cors({
-  origin: process.env.LOCAL_URL || process.env.SERVER_URL,
+  origin: process.env.LOCAL_URL || process.env.ONLINE_SHOP_URL || process.env.CAR_RENTAL_URL,
   credentials: true,
 }));
 
