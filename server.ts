@@ -9,7 +9,7 @@ import { requireUserRoute } from "./middlewares/authMiddleware";
 
 dotenv.config();
 
-const port = process.env.PORT;
+const port = 5000;
 const app = express();
 
 const allowedOrigins = [
