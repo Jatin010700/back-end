@@ -40,7 +40,8 @@ export const carRentalProduct = async (req: Request, res: Response) => {
     const getCarData = await getDocs(carDataCol);
     const carListings = getCarData.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
-    res.json(carListings || []);
+    const encodedConfig = Buffer.from(JSON.stringify(carListings)).toString('base64');
+    res.json({ data: encodedConfig });
   } catch (error) {
     res.status(500).json({ error: 'SERVER ERROR!!!' });
   }

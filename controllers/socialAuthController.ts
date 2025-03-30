@@ -16,7 +16,8 @@ export const firebaseConfig = async (req: Request, res: Response) => {
     measurementId: process.env.FIREBASE_MEASUREMENT_ID,
   };
 
-  res.json(firebaseConfig);
+  const encodedConfig = Buffer.from(JSON.stringify(firebaseConfig)).toString('base64');
+  res.json({ data: encodedConfig });
 }
 
 export const googleAuth = async (req: Request, res: Response) => {
@@ -24,7 +25,7 @@ export const googleAuth = async (req: Request, res: Response) => {
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { uid, name, email } = decodedToken;
+    const { name, email } = decodedToken;
 
     const loginQuery = query(userAccountCol, where("user_name", "==", name), where("email_address", "==", email));
     const userAccountDB = await getDocs(loginQuery);
@@ -43,7 +44,7 @@ export const googleAuth = async (req: Request, res: Response) => {
       });
     }
 
-    res.json({ message: "Authenticated", user: { uid, name } });
+    res.json({ message: "Authenticated", user: { name } });
   } catch (error) {
     res.status(401).json({ error: "Invalid token" });
   }
