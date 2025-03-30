@@ -4,7 +4,7 @@ import { protectedRoute, requireUserRoute } from '../middlewares/authMiddleware'
 import { loginUser, logout, registerUser } from '../controllers/userController';
 import { carRentalProduct, onlineShopProduct } from '../controllers/productController';
 import { uploadCarRentalData } from '../controllers/uploadDataController';
-import { googleAuth } from '../controllers/socialAuthController';
+import { firebaseConfig, googleAuth } from '../controllers/socialAuthController';
 
 const router: Router = Router();
 const uploadFolder = multer({ dest: "uploads/" });
@@ -15,6 +15,7 @@ router.post('/login', loginUser);
 router.post('/logout', logout);
 
 //Social login
+router.get('/firebaseConfig', protectedRoute, firebaseConfig);
 router.post('/google', googleAuth);
 
 // Product route

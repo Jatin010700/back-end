@@ -5,6 +5,20 @@ import admin from "firebase-admin";
 
 const userAccountCol = collection(firebaseDB, "user_account");
 
+export const firebaseConfig = async (req: Request, res: Response) => {
+  const firebaseConfig = {
+    apiKey: process.env.FIREBASE_APIKEY,
+    authDomain: process.env.FIREBASE_AUTHDOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+  };
+
+  res.json(firebaseConfig);
+}
+
 export const googleAuth = async (req: Request, res: Response) => {
   const { idToken } = req.body;
 

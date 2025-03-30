@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { JWTSecretKey, verifyToken } from '../utils/jwtUtils';
+import { verifyToken } from '../utils/jwtUtils';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 // Middleware to check if the user is authenticated
@@ -25,7 +24,7 @@ export const requireUserRoute = async (req: Request, res: Response, next: NextFu
 // Protect route using api
 export const protectedRoute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const apiKey = req.headers["x-api-key"];
-  if (!apiKey || apiKey !== JWTSecretKey) {
+  if (!apiKey || apiKey !== process.env.PUBLIC_KEY) {
     res.status(403).json({ message: "Forbidden" });
     return;
   }
