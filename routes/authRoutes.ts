@@ -2,8 +2,8 @@ import { Router } from 'express';
 import multer from 'multer';
 import { protectedRoute, requireUserRoute } from '../middlewares/authMiddleware';
 import { loginUser, logout, registerUser } from '../controllers/userController';
-import { carRentalProduct, onlineShopProduct } from '../controllers/productController';
-import { uploadCarRentalData } from '../controllers/uploadDataController';
+import { carListByOwner, carRentalProduct, onlineShopProduct } from '../controllers/productController';
+import { deleteCarRentalData, uploadCarRentalData } from '../controllers/dataController';
 import { firebaseConfig, googleAuth } from '../controllers/socialAuthController';
 
 const router: Router = Router();
@@ -20,7 +20,10 @@ router.post('/google', googleAuth);
 
 // Product route
 router.get('/products', protectedRoute, onlineShopProduct);
-router.get('/carData', protectedRoute, carRentalProduct);
+router.get('/carData', carRentalProduct);
+router.delete('/carData/:id', requireUserRoute, deleteCarRentalData);
+router.get('/carData/:user', requireUserRoute, carListByOwner);
+
 
 // Upload product route
 router.post('/ownerData', requireUserRoute, uploadFolder.array("images", 5), uploadCarRentalData);

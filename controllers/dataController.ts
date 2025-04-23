@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import cloudinary from '../config/cloudinaryConfig';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { firebaseDB } from "../config/firebaseConfig";
 import { verifyToken } from '../utils/jwtUtils';
 
@@ -32,7 +32,9 @@ export const uploadCarRentalData = async (req: Request, res: Response): Promise<
     const imageURLS = await Promise.all(
       req.files?.map(async (file: Express.Multer.File) => {
         try {
-          const result = await cloudinary.uploader.upload(file.path);
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: 'car_rental_cloudinary'
+          });
           return result.secure_url;
         } catch (uploadError) {
           console.error("Cloudinary upload error:", uploadError);
@@ -46,15 +48,29 @@ export const uploadCarRentalData = async (req: Request, res: Response): Promise<
 
     //UPLOAD CAR DATA TO "owners_car_data" COLLECTION
     await addDoc(carDataCol, {
-      owner_car_name: carName,
-      owner_car_price: price,
-      owner_car_rent: rent,
-      owner_image_url: imageUrlsJson,
-      login_user_name: (await validateUser).username,
+      car_name: carName,
+      car_price: price,
+      car_rent: rent,
+      image_url: imageUrlsJson,
+      owner_user_name: (await validateUser).username,
+      uploaded_date: new Date().toISOString().slice(0, 16).replace('T', ' '),
     })
 
-    res.status(200).json({ message: "DATA SAVED" });
+    res.status(200).json({ message: "INFO SAVED" });
   } catch (error) {
     res.status(500).json({ error: "SERVOR ERROR!!!" });
+  }
+}
+
+export const deleteCarRentalData = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const carDocRef = doc(carDataCol, id);
+    await deleteDoc(carDocRef);
+
+    res.status(200).json({ message: "Document deleted" });
+  } catch  (error) {
+    res.status(500).json({ error: 'SERVER ERROR!!!' });
   }
 }

@@ -35,13 +35,37 @@ export const onlineShopProduct = async (req: Request, res: Response) => {
 }
 
 export const carRentalProduct = async (req: Request, res: Response) => {
-  try {
+try {
     // GET ALL DATA FROM FIREBASE "owners_car_data" COLLECTION
     const getCarData = await getDocs(carDataCol);
-    const carListings = getCarData.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    const carListings = getCarData.docs.map(doc => ({
+      ...doc.data(),
+       id: doc.id,
+    }));
 
     const encodedConfig = Buffer.from(JSON.stringify(carListings)).toString('base64');
     res.json({ data: encodedConfig });
+  } catch (error) {
+    res.status(500).json({ error: 'SERVER ERROR!!!' });
+  }
+}
+
+
+export const carListByOwner = async (req: Request, res: Response) => {
+  const { user } = req.params;
+
+  try {
+    // GET ALL DATA FROM FIREBASE "owners_car_data" COLLECTION
+    const getCarData = await getDocs(carDataCol);
+    const carListings = getCarData.docs.map(doc => ({
+      ...doc.data(),
+       id: doc.id,
+      owner_user_name: doc.data().owner_user_name
+    }));
+
+    const userCars = carListings.filter(car => car.owner_user_name === user);
+
+    res.status(200).json({userCars, carListings});
   } catch (error) {
     res.status(500).json({ error: 'SERVER ERROR!!!' });
   }
